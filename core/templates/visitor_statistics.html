@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visitor Statistics</title>
+</head>
+<body>
+    <h2>Visitor Statistics</h2>
+    <p>Total Visitors Today: {{ total_visitors_today }}</p>
+    <h3>Reviews Today</h3>
+    <ul>
+        {% for review in reviews_today %}
+            <li>{{ review.name }}: {{ review.review }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
