@@ -2,16 +2,85 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visitor Statistics</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        main {
+            padding: 20px;
+        }
+        h2, h3 {
+            color: #4CAF50;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #fff;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #refresh-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <h2>Visitor Statistics</h2>
-    <p>Total Visitors Today: {{ total_visitors_today }}</p>
-    <h3>Reviews Today</h3>
-    <ul>
-        {% for review in reviews_today %}
-            <li>{{ review.name }}: {{ review.review }}</li>
-        {% endfor %}
-    </ul>
+    <header>
+        <h2>Visitor Statistics</h2>
+    </header>
+    <main>
+        <p>Total Visitors Today: <span id="total-visitors">{{ total_visitors_today }}</span></p>
+        <h3>Reviews Today</h3>
+        <ul id="reviews-list">
+            {% for review in reviews_today %}
+                <li><strong>{{ review.name }}</strong>: {{ review.review }}</li>
+            {% endfor %}
+        </ul>
+        <button id="refresh-btn">Refresh Data</button>
+    </main>
+    <script>
+        document.getElementById('refresh-btn').addEventListener('click', function() {
+            // This function will refresh the data. You can use AJAX or fetch to get new data from the server.
+            console.log('Refresh button clicked.');
+            // Example: fetch new data from the server and update the DOM
+            // fetch('/get-new-data').then(response => response.json()).then(data => updateDOM(data));
+        });
+
+        function updateDOM(data) {
+            // Update the total visitors
+            document.getElementById('total-visitors').innerText = data.total_visitors_today;
+
+            // Update the reviews
+            const reviewsList = document.getElementById('reviews-list');
+            reviewsList.innerHTML = ''; // Clear existing reviews
+            data.reviews_today.forEach(review => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${review.name}</strong>: ${review.review}`;
+                reviewsList.appendChild(li);
+            });
+        }
+    </script>
 </body>
 </html>

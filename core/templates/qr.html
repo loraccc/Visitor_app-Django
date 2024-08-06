@@ -5,9 +5,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        img {
+            max-width: 200px;
+            border: 5px solid #4CAF50;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <h1>QR Code</h1>
-    <img src="{% static 'images/qr_code_review_form.png' %}" alt="QR Code">
+    <img id="qr-code" src="{% static 'images/qr_code_review_form.png' %}" alt="QR Code" onclick="showQRMessage()">
+    <footer>
+        © 2024 Your Company
+    </footer>
+    <script>
+        function showQRMessage() {
+            alert('Scan this QR code to access the review form.');
+        }
+    </script>
 </body>
 </html>

@@ -2,14 +2,76 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Review</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h2 {
+            color: #4CAF50;
+            text-align: center;
+        }
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-    <h2>Submit Your Review</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit Review</button>
-    </form>
+    <main>
+        <h2>Submit Your Review</h2>
+        <form id="review-form" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit Review</button>
+        </form>
+    </main>
+    <script>
+        document.getElementById('review-form').addEventListener('submit', function(event) {
+            // Example validation: Ensure the form is not submitted empty
+            const formElements = this.elements;
+            for (let i = 0; i < formElements.length; i++) {
+                if (formElements[i].type !== 'submit' && formElements[i].value === '') {
+                    alert('Please fill out all fields.');
+                    event.preventDefault();
+                    return;
+                }
+            }
+        });
+    </script>
 </body>
 </html>
