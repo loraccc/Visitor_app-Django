@@ -1,10 +1,9 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit Review</title>
+    <title>Update Your Review</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,7 +41,7 @@
         button:hover {
             background-color: #45a049;
         }
-        input, textarea {
+        textarea {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -54,12 +53,12 @@
 </head>
 <body>
     <main>
-        <h2>Submit Your Review</h2>
+        <h2>Update Your Review</h2>
+        <p>Name: {{ user_review.name }}</p>
         <form method="post">
             {% csrf_token %}
-            <input type="hidden" name="phone_number" value="{{ phone_number }}">
             {{ form.as_p }}
-            <button type="submit">Submit Review</button>
+            <button type="submit">Update Review</button>
         </form>
     </main>
 </body>

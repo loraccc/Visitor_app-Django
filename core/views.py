@@ -1,23 +1,21 @@
 from .models import Review
 
-from .forms import CustomUserCreationForm,ReviewForm
+from .forms import *
 
 import qrcode
 
 from io import BytesIO
 
 from django.core.files.base import ContentFile
-
 from django.shortcuts import render, get_object_or_404, redirect
 from django.shortcuts import render, redirect
-
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
-
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.http import HttpResponse
 
 def register(request):
     if request.method == 'POST':
@@ -52,22 +50,55 @@ def home(request):
 
 
 def submit_review(request):
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('home')  # Redirect to a thank you page after submission
-    else:
-        form = ReviewForm()
+    phone_number = request.POST.get('phone_number', None)
 
-    return render(request, 'submit_review.html', {'form': form})
+    if not phone_number and request.method == 'GET':
+        # Render the phone number form if the number is not provided
+        form = PhoneNumberForm()
+        return render(request, 'phone_number.html', {'form': form})
+
+    if phone_number:
+        try:
+            # Attempt to retrieve an existing review by phone number
+            user_review = Review.objects.get(phone_number=phone_number)
+
+            if request.method == 'POST':
+                # Process the form submission
+                form = SimpleReviewForm(request.POST, instance=user_review)
+                if form.is_valid():
+                    form.save()
+                    return HttpResponse("Thank you for updating your review!")
+            else:
+                # On GET request, show the existing review to update
+                form = SimpleReviewForm(instance=user_review)
+                return render(request, 'simple_review.html', {'form': form, 'user_review': user_review})
+
+        except Review.DoesNotExist:
+            # Use FullReviewForm if no review exists
+            form = FullReviewForm(request.POST)
+            if form.is_valid():
+                # Create a new Review object
+                Review.objects.create(
+                    name=form.cleaned_data['name'],
+                    phone_number=form.cleaned_data['phone_number'],
+                    email=form.cleaned_data['email'],
+                    review=form.cleaned_data['review']
+                )
+                return HttpResponse("Thank you for submitting your review!")
+            else:
+                return render(request, 'submit_review.html', {'form': form, 'phone_number': phone_number})
+    else:
+        # Initial GET request displays the phone number entry form
+        form = PhoneNumberForm()
+        return render(request, 'phone_number.html', {'form': form})
+
 
 def review_qr(request, pk):
     review = get_object_or_404(Review, pk=pk)
     return render(request, 'review_qr.html', {'review': review})
 
 def see_qr(request):
-    
+
     return render(request, 'qr.html')
 
 
