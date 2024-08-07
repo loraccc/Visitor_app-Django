@@ -54,13 +54,17 @@ class FullReviewForm(forms.ModelForm):
             'review': forms.Textarea(attrs={'placeholder': 'Enter your review here...'}),
         }
 
+
 class SimpleReviewForm(forms.ModelForm):
-    """
-    Form for updating an existing review.
-    """
     class Meta:
         model = Review
-        fields = ['review']
+        fields = ['review']  # Only the fields you want to update
         widgets = {
             'review': forms.Textarea(attrs={'placeholder': 'Update your review here...'}),
         }
+
+    def clean_review(self):
+        review = self.cleaned_data.get('review', '').strip()
+        if not review:
+            raise forms.ValidationError("Review cannot be empty.")
+        return review

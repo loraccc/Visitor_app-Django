@@ -50,57 +50,55 @@ def home(request):
 
 
 def submit_review(request):
-    phone_number = request.POST.get('phone_number', None)
+    # Retrieve phone number from GET or POST
+    phone_number = request.POST.get('phone_number') or request.GET.get('phone_number')
 
-    if not phone_number and request.method == 'GET':
-        # Render the phone number form if the number is not provided
-        form = PhoneNumberForm()
-        return render(request, 'phone_number.html', {'form': form})
-
-    if phone_number:
-        try:
-            # Attempt to retrieve an existing review by phone number
-            user_review = Review.objects.get(phone_number=phone_number)
-
-            if request.method == 'POST':
-                # Process the form submission
-                form = SimpleReviewForm(request.POST, instance=user_review)
-                if form.is_valid():
-                    form.save()
-                    return HttpResponse("Thank you for updating your review!")
+    if request.method == 'POST':
+        if not phone_number:
+            # Render the phone number form if the number is not provided
+            form = PhoneNumberForm(request.POST)
+            if form.is_valid():
+                phone_number = form.cleaned_data['phone_number']
+                return redirect(f'?phone_number={phone_number}')
             else:
-                # On GET request, show the existing review to update
-                form = SimpleReviewForm(instance=user_review)
-                return render(request, 'simple_review.html', {'form': form, 'user_review': user_review})
+                return render(request, 'phone_number.html', {'form': form})
 
+        try:
+            # Check if the phone number exists in the database
+            user_review = Review.objects.get(phone_number=phone_number)
+            # User has reviewed, provide option to update review
+            form = SimpleReviewForm(request.POST, instance=user_review)
+            if form.is_valid():
+                review_text = form.cleaned_data.get('review', '').strip()
+                if not review_text:
+                    return render(request, 'simple_review.html', {'form': form, 'errors': {'review': ['Review cannot be empty.']}})
+                
+                form.save()
+                print("Review updated successfully.")
+                return render(request, 'simple_review.html', {'form': form, 'message': "Thank you for updating your review!"})
+            else:
+                # Render the form again if not valid and show errors
+                print("Form errors:", form.errors)
+                return render(request, 'simple_review.html', {'form': form, 'user_review': user_review, 'errors': form.errors})
         except Review.DoesNotExist:
-            # Use FullReviewForm if no review exists
+            # If no review exists, create a new one
             form = FullReviewForm(request.POST)
             if form.is_valid():
-                # Create a new Review object
-                Review.objects.create(
-                    name=form.cleaned_data['name'],
-                    phone_number=form.cleaned_data['phone_number'],
-                    email=form.cleaned_data['email'],
-                    review=form.cleaned_data['review']
-                )
-                return HttpResponse("Thank you for submitting your review!")
+                form.save()
+                return render(request, 'submit_review.html', {'form': form, 'message': "Thank you for submitting your review!"})
             else:
-                return render(request, 'submit_review.html', {'form': form, 'phone_number': phone_number})
+                return render(request, 'submit_review.html', {'form': form, 'errors': form.errors, 'phone_number': phone_number})
     else:
         # Initial GET request displays the phone number entry form
         form = PhoneNumberForm()
         return render(request, 'phone_number.html', {'form': form})
-
 
 def review_qr(request, pk):
     review = get_object_or_404(Review, pk=pk)
     return render(request, 'review_qr.html', {'review': review})
 
 def see_qr(request):
-
     return render(request, 'qr.html')
-
 
 
 def visitor_statistics(request):
