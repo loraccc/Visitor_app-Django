@@ -13,8 +13,12 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Update Review</button>
+        {% if user_review %}
+            <p>Your current review: {{ user_review.review_text }}</p>
+        {% endif %}
+        <button type="submit">Submit</button>
     </form>
+    
     {% if errors %}
         <div style="color: red;">
             <ul>
