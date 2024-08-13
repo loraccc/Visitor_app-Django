@@ -137,9 +137,40 @@ def see_qr(request):
 
 def visitor_statistics(request):
     today = timezone.now().date()
+    
+    # Today's data
     total_visitors_today = Review.objects.filter(created_at__date=today).count()
     reviews_today = Review.objects.filter(created_at__date=today)
+    
+    # All-time data
+    total_visitors_all_time = Review.objects.count()
+    all_reviews = Review.objects.all()
+    
+    # Department and purpose choices
+    departments = [choice[1] for choice in Review.DEPARTMENT_CHOICES]
+    purposes = [choice[1] for choice in Review.PURPOSE_CHOICES]
+    
     return render(request, 'visitor_statistics.html', {
         'total_visitors_today': total_visitors_today,
         'reviews_today': reviews_today,
+        'total_visitors_all_time': total_visitors_all_time,
+        'all_reviews': all_reviews,
+        'departments': departments,
+        'purposes': purposes,
+    })
+    today = timezone.now().date()
+    
+    # Today's data
+    total_visitors_today = Review.objects.filter(created_at__date=today).count()
+    reviews_today = Review.objects.filter(created_at__date=today)
+    
+    # All-time data
+    total_visitors_all_time = Review.objects.count()
+    all_reviews = Review.objects.all()
+    
+    return render(request, 'visitor_statistics.html', {
+        'total_visitors_today': total_visitors_today,
+        'reviews_today': reviews_today,
+        'total_visitors_all_time': total_visitors_all_time,
+        'all_reviews': all_reviews,
     })

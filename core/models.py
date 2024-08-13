@@ -53,6 +53,13 @@ class Review(models.Model):
         ('Other', 'Other'),
     ]
 
+    CUSTOM_FIELD = [
+        ('Business', 'Business Meeting'),
+        ('Support', 'Customer Support'),
+        ('Consultation', 'Consultation'),
+        ('Other', 'Other'),
+    ]
+
     name = models.CharField(max_length=100)  # Required
     email = models.EmailField(blank=True, null=True)  # Optional
     phone_number = models.IntegerField(max_length=10, unique=True)  # Required and unique
