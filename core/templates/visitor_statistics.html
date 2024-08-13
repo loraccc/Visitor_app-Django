@@ -7,138 +7,100 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
+            margin: 20px;
             padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-        }
-        main {
-            padding: 20px;
-        }
-        h2, h3 {
-            color: #4CAF50;
+            background-color: #f4f4f4;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
         th, td {
+            padding: 12px;
             border: 1px solid #ddd;
-            padding: 8px;
             text-align: left;
         }
         th {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #f9f9f9;
         }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        #refresh-btn {
-            margin-top: 20px;
+        button {
             padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h2>Visitor Statistics</h2>
-    </header>
-    <main>
-        <h3>Today's Statistics</h3>
-        <p>Total Visitors Today: <span id="total-visitors-today">{{ total_visitors_today }}</span></p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Review</th>
-                    <th>Department</th>
-                    <th>Purpose</th>
-                </tr>
-            </thead>
-            <tbody id="reviews-list-today">
-                {% for review in reviews_today %}
-                <tr>
-                    <td>{{ review.name }}</td>
-                    <td>{{ review.review }}</td>
-                    <td>{{ review.get_department_display }}</td>
-                    <td>{{ review.get_purpose_display }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <h1>Visitor Statistics</h1>
+    <p>Total visitors today: {{ total_visitors_today }}</p>
+    <p>Total visitors all time: {{ total_visitors_all_time }}</p>
 
-        <h3>All-Time Statistics</h3>
-        <p>Total Visitors All Time: <span id="total-visitors-all-time">{{ total_visitors_all_time }}</span></p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Review</th>
-                    <th>Department</th>
-                    <th>Purpose</th>
-                </tr>
-            </thead>
-            <tbody id="all-reviews-list">
-                {% for review in all_reviews %}
+    <h2>Reviews Today</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Department</th>
+                <th>Purpose</th>
+                <th>Review</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews_today %}
                 <tr>
                     <td>{{ review.name }}</td>
-                    <td>{{ review.review }}</td>
+                    <td>{{ review.email }}</td>
+                    <td>{{ review.phone_number }}</td>
                     <td>{{ review.get_department_display }}</td>
                     <td>{{ review.get_purpose_display }}</td>
+                    <td>{{ review.review }}</td>
+                    <td>{{ review.created_at }}</td>
                 </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            {% endfor %}
+        </tbody>
+    </table>
 
-        <button id="refresh-btn">Refresh Data</button>
-    </main>
-    <script>
-        document.getElementById('refresh-btn').addEventListener('click', function() {
-            console.log('Refresh button clicked.');
-            // Example: fetch new data from the server and update the DOM
-            // fetch('/get-new-data').then(response => response.json()).then(data => updateDOM(data));
-        });
+    <h2>All Reviews</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Department</th>
+                <th>Purpose</th>
+                <th>Review</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in all_reviews %}
+                <tr>
+                    <td>{{ review.name }}</td>
+                    <td>{{ review.email }}</td>
+                    <td>{{ review.phone_number }}</td>
+                    <td>{{ review.get_department_display }}</td>
+                    <td>{{ review.get_purpose_display }}</td>
+                    <td>{{ review.review }}</td>
+                    <td>{{ review.created_at }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-        function updateDOM(data) {
-            // Update today's statistics
-            document.getElementById('total-visitors-today').innerText = data.total_visitors_today;
-            const reviewsListToday = document.getElementById('reviews-list-today');
-            reviewsListToday.innerHTML = '';
-            data.reviews_today.forEach(review => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${review.name}</td>
-                                 <td>${review.review}</td>
-                                 <td>${review.department}</td>
-                                 <td>${review.purpose}</td>`;
-                reviewsListToday.appendChild(row);
-            });
-
-            // Update all-time statistics
-            document.getElementById('total-visitors-all-time').innerText = data.total_visitors_all_time;
-            const allReviewsList = document.getElementById('all-reviews-list');
-            allReviewsList.innerHTML = '';
-            data.all_reviews.forEach(review => {
-                const row = document.createElement('tr');
-                row.innerHTML = `<td>${review.name}</td>
-                                 <td>${review.review}</td>
-                                 <td>${review.department}</td>
-                                 <td>${review.purpose}</td>`;
-                allReviewsList.appendChild(row);
-            });
-        }
-    </script>
+    <form action="{% url 'export_visitor_statistics_csv' %}" method="get">
+        <button type="submit">Download CSV</button>
+    </form>
 </body>
 </html>

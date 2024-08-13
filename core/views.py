@@ -3,6 +3,7 @@ from .models import Review
 from .forms import *
 
 import qrcode
+import csv
 
 from PIL import Image
 
@@ -158,19 +159,26 @@ def visitor_statistics(request):
         'departments': departments,
         'purposes': purposes,
     })
-    today = timezone.now().date()
-    
-    # Today's data
-    total_visitors_today = Review.objects.filter(created_at__date=today).count()
-    reviews_today = Review.objects.filter(created_at__date=today)
-    
-    # All-time data
-    total_visitors_all_time = Review.objects.count()
-    all_reviews = Review.objects.all()
-    
-    return render(request, 'visitor_statistics.html', {
-        'total_visitors_today': total_visitors_today,
-        'reviews_today': reviews_today,
-        'total_visitors_all_time': total_visitors_all_time,
-        'all_reviews': all_reviews,
-    })
+
+
+def export_visitor_statistics_csv(request):
+    # Create the HttpResponse object with the appropriate CSV header.
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="visitor_statistics.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Name', 'Email', 'Phone Number', 'Department', 'Purpose', 'Review', 'Created At'])
+
+    reviews = Review.objects.all()
+    for review in reviews:
+        writer.writerow([
+            review.name,
+            review.email,
+            review.phone_number,
+            review.get_department_display(),
+            review.get_purpose_display(),
+            review.review,
+            review.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+        ])
+
+    return response
