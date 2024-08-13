@@ -39,9 +39,26 @@ class CustomUser(AbstractUser):
 
 
 class Review(models.Model):
+    DEPARTMENT_CHOICES = [
+        ('BOD', 'Board of Directors'),
+        ('Manager', 'Manager'),
+        ('Help Desk', 'Help Desk'),
+        ('Gov Official', 'Government Official'),
+    ]
+
+    PURPOSE_CHOICES = [
+        ('Business', 'Business Meeting'),
+        ('Support', 'Customer Support'),
+        ('Consultation', 'Consultation'),
+        ('Other', 'Other'),
+    ]
+
     name = models.CharField(max_length=100)  # Required
     email = models.EmailField(blank=True, null=True)  # Optional
-    phone_number = models.CharField(max_length=15, unique=True)  # Required and unique
+    phone_number = models.IntegerField(max_length=10, unique=True)  # Required and unique
+    department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES, default='Help Desk')  # Department field
+    purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES, default='Other')  # Purpose field
+    other_purpose = models.CharField(max_length=255, blank=True, null=True)  # Optional additional detail
     review = models.TextField(blank=True)  # Visitor's review
     created_at = models.DateTimeField(auto_now_add=True)  # Timestamp for review creation
 

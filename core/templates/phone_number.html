@@ -49,16 +49,39 @@
             border: 1px solid #ccc;
             font-size: 14px;
         }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <main>
         <h2>Enter Your Phone Number</h2>
-        <form method="post">
+        <form method="post" onsubmit="return validateForm()">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form.phone_number.label_tag }}
+            {{ form.phone_number }}
+            <div id="errorMessage" class="error"></div>
             <button type="submit">Submit</button>
         </form>
     </main>
+    <script>
+        function validateForm() {
+            var phoneNumber = document.querySelector("input[name='phone_number']").value;
+            var errorMessage = document.getElementById("errorMessage");
+            var regex = /^[0-9]+$/;
+
+            if (!regex.test(phoneNumber)) {
+                errorMessage.textContent = "Please enter a valid phone number using only digits.";
+                return false;
+            }
+
+            errorMessage.textContent = "";
+            return true;
+        }
+    </script>
 </body>
 </html>

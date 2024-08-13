@@ -50,79 +50,79 @@ class CustomLoginView(LoginView):
 def home(request):
     return render(request, 'home.html') 
 
-def submit_review(request):
-    if request.method == 'POST':
-        phone_number = request.POST.get('phone_number')
-
-        # Check if the phone number exists
-        review_instance = Review.objects.filter(phone_number=phone_number).first()
-
-        if review_instance:
-            # Handle existing review
-            form = SimpleReviewForm(request.POST, instance=review_instance)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect('')
-            else:
-                # If form is not valid, re-render the simple form
-                return render(request, 'simple_review.html', {'form': form})
-
-        else:
-            # Handle new review
-            form = FullReviewForm(request.POST)
-            if form.is_valid():
-                form.save()
-                return HttpResponseRedirect('')
-            else:
-                # If form is not valid, re-render the full review form
-                return render(request, 'submit_review.html', {'form': form})
-    
-    # Render phone number form if not a POST request or phone number not found
-    form = PhoneNumberForm()
-    return render(request, 'phone_number.html', {'form': form})
-
 # def submit_review(request):
 #     if request.method == 'POST':
-#         # Process form submission
-#         phone_number = request.POST.get('phone_number', None)
-#         if not phone_number:
-#             # If phone number is not provided, render the phone number form
-#             form = PhoneNumberForm()
-#             return render(request, 'phone_number.html', {'form': form})
+#         phone_number = request.POST.get('phone_number')
 
-#         try:
-#             # Check if the user already exists
-#             user_review = Review.objects.get(phone_number=phone_number)
-#             # User has reviewed, provide option to update review
-#             form = SimpleReviewForm(request.POST, instance=user_review)
-#             print(request.POST,'helloooooooo')
+#         # Check if the phone number exists
+#         review_instance = Review.objects.filter(phone_number=phone_number).first()
+
+#         if review_instance:
+#             # Handle existing review
+#             form = SimpleReviewForm(request.POST, instance=review_instance)
 #             if form.is_valid():
-#                 print(form.cleaned_data)
 #                 form.save()
-#                 return HttpResponse("Thank you for updating your review!")
+#                 return HttpResponseRedirect('')
 #             else:
-#                 print(form.errors) 
-#                 # Render the simple review form with errors
-#                 return render(request, 'simple_review.html', {'form': form, 'user_review': user_review})
-#         except Review.DoesNotExist:
-#             # User has not reviewed, collect full info
+#                 # If form is not valid, re-render the simple form
+#                 return render(request, 'simple_review.html', {'form': form})
+
+#         else:
+#             # Handle new review
 #             form = FullReviewForm(request.POST)
 #             if form.is_valid():
-#                 # Save new user and review
-#                 Review.objects.create(
-#                     name=form.cleaned_data['name'],
-#                     phone_number=form.cleaned_data['phone_number'],
-#                     email=form.cleaned_data['email'],
-#                     review=form.cleaned_data['review']
-#                 )
-#                 return HttpResponse("Thank you for submitting your review!")
+#                 form.save()
+#                 return HttpResponseRedirect('')
 #             else:
-#                 # Render the full review form with errors
-#                 return render(request, 'submit_review.html', {'form': form, 'phone_number': phone_number})
-#     else:
-#         # Display phone number entry form
-#         form = PhoneNumberForm()
-#         return render(request, 'phone_number.html', {'form': form})
+#                 # If form is not valid, re-render the full review form
+#                 return render(request, 'submit_review.html', {'form': form})
+    
+#     # Render phone number form if not a POST request or phone number not found
+#     form = PhoneNumberForm()
+#     return render(request, 'phone_number.html', {'form': form})
+
+def submit_review(request):
+    if request.method == 'POST':
+        # Process form submission
+        phone_number = request.POST.get('phone_number', None)
+        if not phone_number:
+            # If phone number is not provided, render the phone number form
+            form = PhoneNumberForm()
+            return render(request, 'phone_number.html', {'form': form})
+
+        try:
+            # Check if the user already exists
+            user_review = Review.objects.get(phone_number=phone_number)
+            # User has reviewed, provide option to update review
+            form = SimpleReviewForm(request.POST, instance=user_review)
+            print(request.POST,'helloooooooo')
+            if form.is_valid():
+                print(form.cleaned_data)
+                form.save()
+                return redirect('home')
+            else:
+                print(form.errors) 
+                # Render the simple review form with errors
+                return render(request, 'simple_review.html', {'form': form, 'user_review': user_review})
+        except Review.DoesNotExist:
+            # User has not reviewed, collect full info
+            form = FullReviewForm(request.POST)
+            if form.is_valid():
+                # Save new user and review
+                Review.objects.create(
+                    name=form.cleaned_data['name'],
+                    phone_number=form.cleaned_data['phone_number'],
+                    email=form.cleaned_data['email'],
+                    review=form.cleaned_data['review']
+                )
+                return HttpResponse("Thank you for submitting your review!")
+            else:
+                # Render the full review form with errors
+                return render(request, 'submit_review.html', {'form': form, 'phone_number': phone_number})
+    else:
+        # Display phone number entry form
+        form = PhoneNumberForm()
+        return render(request, 'phone_number.html', {'form': form})
 
 
 def review_qr(request, pk):
