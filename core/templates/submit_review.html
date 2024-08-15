@@ -89,10 +89,10 @@
             {% csrf_token %}
             <input type="hidden" name="phone_number" value="{{ phone_number }}">
             {{ form.as_p }}
-            <button type="submit">Submit Review</button>
+            <button type="submit">Submit</button>
         </form>
     </main>
-    <script>
+    <!-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('review-form');
             
@@ -105,6 +105,6 @@
                 // form.submit();
             });
         });
-    </script>
+    </script> -->
 </body>
 </html>

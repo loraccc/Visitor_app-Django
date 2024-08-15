@@ -72,10 +72,10 @@
         function validateForm() {
             var phoneNumber = document.querySelector("input[name='phone_number']").value;
             var errorMessage = document.getElementById("errorMessage");
-            var regex = /^[0-9]+$/;
+            var regex = /^[0-9]{10}$/; // Regex for exactly 10 digits
 
             if (!regex.test(phoneNumber)) {
-                errorMessage.textContent = "Please enter a valid phone number using only digits.";
+                errorMessage.textContent = "Phone number must be exactly 10 digits long.";
                 return false;
             }
 

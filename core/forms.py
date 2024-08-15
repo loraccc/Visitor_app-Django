@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'name', 'phone_number', 'review', 'email', 'password1', 'password2']
+        fields = ['username', 'name', 'phone_number', 'email', 'password1', 'password2']
 
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')
@@ -24,11 +24,12 @@ def validate_phone_number_length(value):
             'Phone number must be exactly 10 digits long.',
             code='invalid_phone_number_length'
         )
+
 class PhoneNumberForm(forms.Form):
     """
     Form for collecting a visitor's phone number.
     """
-    phone_number = forms.IntegerField(
+    phone_number = forms.CharField(
         required=True, 
         label='Phone Number',
         widget=forms.TextInput(attrs={
@@ -52,7 +53,7 @@ class FullReviewForm(forms.ModelForm):
         max_length=15, 
         required=True, 
         label='Phone Number',
-        widget=forms.TextInput(attrs={'placeholder': 'Enter your phone number'})
+        widget=forms.TextInput(attrs={'placeholder': 'Enter your phone number', 'readonly': 'readonly'})
     )
     email = forms.EmailField(
         required=False, 
