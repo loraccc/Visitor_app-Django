@@ -113,13 +113,16 @@ class FullReviewForm(forms.ModelForm):
 class SimpleReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['review']  # Only the fields you want to update
+        fields = ['name', 'phone_number', 'email', 'department', 'purpose', 'other_purpose', 'review']
+        # fields = ['name', 'phone_number', 'email', 'review']  # Include all fields you want to handle
         widgets = {
             'review': forms.Textarea(attrs={'placeholder': 'Update your review here...'}),
         }
 
-    def clean_review(self):
-        review = self.cleaned_data.get('review', '').strip()
-        if not review:
-            raise forms.ValidationError("Review cannot be empty.")
-        return review
+    def __init__(self, *args, **kwargs):
+        super(SimpleReviewForm, self).__init__(*args, **kwargs)
+        # Set fields as read-only if needed
+        if self.instance and self.instance.pk:
+            self.fields['name'].widget.attrs['readonly'] = 'readonly'
+            self.fields['phone_number'].widget.attrs['readonly'] = 'readonly'
+            self.fields['email'].widget.attrs['readonly'] = 'readonly'

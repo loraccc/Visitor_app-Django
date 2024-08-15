@@ -3,7 +3,7 @@ from django import views
 from django.contrib.auth.views import LogoutView
 
 from .views import (register, CustomLoginView,home,
-                    submit_review,review_qr,
+                    submit_review,review_qr,simple_review,
                     see_qr,
                     visitor_statistics,export_visitor_statistics_csv)
 
@@ -17,6 +17,7 @@ urlpatterns = [
 
 
     path('submit-review/', submit_review, name='submit-review'),
+    path('simple-review/<str:phone_number>/', simple_review, name='simple-review'),
     path('review-qr/<int:pk>/', review_qr, name='review_qr'),
 
 

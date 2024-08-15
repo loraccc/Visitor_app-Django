@@ -62,7 +62,7 @@ class Review(models.Model):
 
     name = models.CharField(max_length=100)  # Required
     email = models.EmailField(blank=True, null=True)  # Optional
-    phone_number = models.IntegerField(max_length=10, unique=True)  # Required and unique
+    phone_number = models.IntegerField(max_length=10)  # Required and unique
     department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES, default='Help Desk')  # Department field
     purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES, default='Other')  # Purpose field
     other_purpose = models.CharField(max_length=255, blank=True, null=True)  # Optional additional detail

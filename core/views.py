@@ -9,9 +9,10 @@ from PIL import Image
 
 from io import BytesIO
 
+from django.db import IntegrityError
 from django.core.files.base import ContentFile
 from django.shortcuts import render, get_object_or_404, redirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_list_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
@@ -60,36 +61,6 @@ class CustomLoginView(LoginView):
 def home(request):
     return render(request, 'home.html') 
 
-# def submit_review(request):
-#     if request.method == 'POST':
-#         phone_number = request.POST.get('phone_number')
-
-#         # Check if the phone number exists
-#         review_instance = Review.objects.filter(phone_number=phone_number).first()
-
-#         if review_instance:
-#             # Handle existing review
-#             form = SimpleReviewForm(request.POST, instance=review_instance)
-#             if form.is_valid():
-#                 form.save()
-#                 return HttpResponseRedirect('')
-#             else:
-#                 # If form is not valid, re-render the simple form
-#                 return render(request, 'simple_review.html', {'form': form})
-
-#         else:
-#             # Handle new review
-#             form = FullReviewForm(request.POST)
-#             if form.is_valid():
-#                 form.save()
-#                 return HttpResponseRedirect('')
-#             else:
-#                 # If form is not valid, re-render the full review form
-#                 return render(request, 'submit_review.html', {'form': form})
-    
-#     # Render phone number form if not a POST request or phone number not found
-#     form = PhoneNumberForm()
-#     return render(request, 'phone_number.html', {'form': form})
 
 def submit_review(request):
     if request.method == 'POST':
@@ -101,19 +72,10 @@ def submit_review(request):
             return render(request, 'phone_number.html', {'form': form})
 
         try:
-            # Check if the user already exists
-            user_review = Review.objects.get(phone_number=phone_number)
-            # User has reviewed, provide option to update review
-            form = SimpleReviewForm(request.POST, instance=user_review)
-            print(request.POST,'helloooooooo')
-            if form.is_valid():
-                print(form.cleaned_data)
-                form.save()
-                return redirect('home')
-            else:
-                print(form.errors) 
-                # Render the simple review form with errors
-                return render(request, 'simple_review.html', {'form': form, 'user_review': user_review})
+            user_review = Review.objects.filter(phone_number=phone_number)
+            if user_review.exists():
+            # Redirect to the simple review form for updating/adding a new review
+                return redirect('simple-review', phone_number=phone_number)
         except Review.DoesNotExist:
             # User has not reviewed, collect full info
             form = FullReviewForm(request.POST)
@@ -133,7 +95,36 @@ def submit_review(request):
         # Display phone number entry form
         form = PhoneNumberForm()
         return render(request, 'phone_number.html', {'form': form})
-
+def simple_review(request, phone_number):
+    existing_reviews = get_list_or_404(Review, phone_number=phone_number)
+    
+    if request.method == 'POST':
+        form = SimpleReviewForm(request.POST)
+        if form.is_valid():
+            try:
+                # Create a new review instance with the same phone number
+                new_review = form.save(commit=False)
+                new_review.phone_number = phone_number  # Keep the same phone number
+                new_review.pk = None  # Ensure a new instance is created
+                new_review.save()
+                return redirect('home')  # Redirect to a success page or your desired URL
+            except IntegrityError:
+                form.add_error(None, "A review with this phone number already exists.")
+        
+    else:
+        # Initialize the form with existing review data (use data from the first review)
+        first_review = existing_reviews[0]
+        form = SimpleReviewForm(initial={
+            'name': first_review.name,
+            'phone_number': first_review.phone_number,
+            'email': first_review.email,
+            'department': first_review.department,
+            'purpose': first_review.purpose,
+            'other_purpose': first_review.other_purpose,
+            'review': first_review.review,
+        })
+    
+    return render(request, 'simple_review.html', {'form': form, 'existing_reviews': existing_reviews})
 
 def review_qr(request, pk):
     review = get_object_or_404(Review, pk=pk)
