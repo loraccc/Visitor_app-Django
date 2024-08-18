@@ -24,5 +24,5 @@ urlpatterns = [
     path('visitor_statistics', visitor_statistics, name='visitor_statistics'),
     path('visitor_statistics/csv/', export_visitor_statistics_csv, name='export_visitor_statistics_csv'),
 
-    path('', see_qr, name='see_qr'),
+    path('qr', see_qr, name='see_qr'),
 ]

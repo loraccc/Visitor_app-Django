@@ -64,20 +64,21 @@ def home(request):
 
 def submit_review(request):
     if request.method == 'POST':
-        # Process form submission
         phone_number = request.POST.get('phone_number', None)
+        
         if not phone_number:
             # If phone number is not provided, render the phone number form
             form = PhoneNumberForm()
             return render(request, 'phone_number.html', {'form': form})
 
-        try:
-            user_review = Review.objects.filter(phone_number=phone_number)
-            if user_review.exists():
+        # Check if the phone number already exists
+        existing_reviews = Review.objects.filter(phone_number=phone_number)
+        
+        if existing_reviews.exists():
             # Redirect to the simple review form for updating/adding a new review
-                return redirect('simple-review', phone_number=phone_number)
-        except Review.DoesNotExist:
-            # User has not reviewed, collect full info
+            return redirect('simple-review', phone_number=phone_number)
+        else:
+            # Collect full info if no review exists
             form = FullReviewForm(request.POST)
             if form.is_valid():
                 # Save new user and review
