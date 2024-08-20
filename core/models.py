@@ -13,9 +13,6 @@ class Role(models.Model):
         return self.name
 
 class CustomUser(AbstractUser):
-    name = models.CharField(max_length=100,unique=True)  # Required field
-    phone_number = models.CharField(max_length=15,unique=True)  # Required field
-    review = models.TextField()  # Required field
     email = models.EmailField(blank=True, null=True)  # Optional field
 
     roles = models.ManyToManyField(Role, related_name='users', blank=True)

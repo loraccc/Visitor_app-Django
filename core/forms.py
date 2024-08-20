@@ -1,25 +1,37 @@
 from django import forms
-from .models import CustomUser,Review
+from .models import CustomUser,Review,Role
 
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 class CustomUserCreationForm(UserCreationForm):
+    roles = forms.ModelMultipleChoiceField(queryset=Role.objects.all(), required=False, widget=forms.CheckboxSelectMultiple)
+
     class Meta:
         model = CustomUser
-        fields = ['username', 'name', 'phone_number', 'email', 'password1', 'password2']
-
+        fields = ['username', 'email', 'password1', 'password2', 'roles']
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')
         if CustomUser.objects.filter(phone_number=phone_number).exists():
             raise forms.ValidationError("This phone number is already in use.")
         return phone_number
+    
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.CharField(
+        max_length=254,
+        widget=forms.TextInput(attrs={'autofocus': True, 'placeholder': 'Username'})
+    )
+    password = forms.CharField(
+        strip=False,
+        widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
+    )
 
 def validate_phone_number_length(value):
     """
     Validator to ensure that the phone number is exactly 10 digits long.
     """
-    if len(str(value)) != 10:
+    if len(str(value)) != 10: 
+
         raise ValidationError(
             'Phone number must be exactly 10 digits long.',
             code='invalid_phone_number_length'

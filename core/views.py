@@ -30,32 +30,42 @@ def register(request):
             print(f"Password: {request.POST.get('password1')}")
         
             login(request, user)
-            return redirect('/')  
+            return redirect('see_qr')  
     else:
         form = CustomUserCreationForm()
     return render(request, 'register.html', {'form': form})
 
-class CustomLoginView(LoginView):
-    template_name = 'login.html'
-    authentication_form = AuthenticationForm
-    # redirect_authenticated_user = True  
-    success_url = reverse_lazy('home')  
+def custom_login(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None: 
+                login(request, user)
+                return redirect('home')  
+            else:
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Invalid username or password.")
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
 
-    def form_valid(self, form):
-        """If the form is valid, redirect to the success URL."""
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password')
-        print(f"Valid login attempt with username: {username} and password: {password}")
-        messages.success(self.request, "You have successfully logged in.")  # Add a success message
-        return super().form_valid(form)
+# class CustomLoginView(LoginView):
+#     template_name = 'login.html'
+#     success_url = reverse_lazy('home')
 
-    def form_invalid(self, form):
-        """If the form is invalid, render the invalid form."""
-        username = self.request.POST.get('username')
-        password = self.request.POST.get('password')
-        print(f"Invalid login attempt with username: {username} and password: {password}")
-        messages.error(self.request, "Invalid username or password.")  # Add an error message
-        return self.render_to_response(self.get_context_data(form=form))
+#     def form_valid(self, form):
+#         """If the form is valid, redirect to the success URL."""
+#         messages.success(self.request, "You have successfully logged in.")
+#         return super().form_valid(form)
+
+#     def form_invalid(self, form):
+#         """If the form is invalid, render the invalid form."""
+#         messages.error(self.request, "Invalid username or password.")
+#         return self.render_to_response(self.get_context_data(form=form))
 
 
 def home(request):
