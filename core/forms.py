@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'name', 'phone_number', 'review', 'email', 'password1', 'password2']
+        fields = ['username', 'name', 'phone_number', 'email', 'password1', 'password2']
 
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')
@@ -24,11 +24,12 @@ def validate_phone_number_length(value):
             'Phone number must be exactly 10 digits long.',
             code='invalid_phone_number_length'
         )
+
 class PhoneNumberForm(forms.Form):
     """
     Form for collecting a visitor's phone number.
     """
-    phone_number = forms.IntegerField(
+    phone_number = forms.CharField(
         required=True, 
         label='Phone Number',
         widget=forms.TextInput(attrs={
@@ -52,7 +53,7 @@ class FullReviewForm(forms.ModelForm):
         max_length=15, 
         required=True, 
         label='Phone Number',
-        widget=forms.TextInput(attrs={'placeholder': 'Enter your phone number'})
+        widget=forms.TextInput(attrs={'placeholder': 'Enter your phone number', 'readonly': 'readonly'})
     )
     email = forms.EmailField(
         required=False, 
@@ -112,13 +113,16 @@ class FullReviewForm(forms.ModelForm):
 class SimpleReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['review']  # Only the fields you want to update
+        fields = ['name', 'phone_number', 'email', 'department', 'purpose', 'other_purpose', 'review']
+        # fields = ['name', 'phone_number', 'email', 'review']  # Include all fields you want to handle
         widgets = {
             'review': forms.Textarea(attrs={'placeholder': 'Update your review here...'}),
         }
 
-    def clean_review(self):
-        review = self.cleaned_data.get('review', '').strip()
-        if not review:
-            raise forms.ValidationError("Review cannot be empty.")
-        return review
+    def __init__(self, *args, **kwargs):
+        super(SimpleReviewForm, self).__init__(*args, **kwargs)
+        # Set fields as read-only if needed
+        if self.instance and self.instance.pk:
+            self.fields['name'].widget.attrs['readonly'] = 'readonly'
+            self.fields['phone_number'].widget.attrs['readonly'] = 'readonly'
+            self.fields['email'].widget.attrs['readonly'] = 'readonly'

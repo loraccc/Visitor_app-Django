@@ -16,12 +16,18 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
         }
-        h2 {
-            color: #4CAF50;
-            text-align: center;
-            margin-bottom: 20px;
+        
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            padding: 20px; /* Optional padding for better spacing */
         }
+        
         form {
             background-color: #fff;
             padding: 30px;
@@ -29,11 +35,17 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             max-width: 450px;
             width: 100%;
-            transition: box-shadow 0.3s ease-in-out;
+            mix-height: 600px; /* Adjust as needed */
+            box-sizing: border-box;
+            transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+            animation: slideIn 1s ease-in-out;
         }
+        
         form:hover {
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px);
         }
+        
         button {
             width: 100%;
             padding: 12px;
@@ -46,9 +58,11 @@
             transition: background-color 0.3s ease-in-out;
             margin-top: 10px;
         }
+        
         button:hover {
             background-color: #45a049;
         }
+        
         input, textarea {
             width: 100%;
             padding: 12px;
@@ -59,25 +73,39 @@
             box-sizing: border-box;
             transition: border-color 0.3s ease-in-out;
         }
+        
         input:focus, textarea:focus {
             border-color: #4CAF50;
             outline: none;
         }
+        
         textarea {
             resize: vertical;
             min-height: 100px;
         }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
     </style>
 </head>
 <body>
     <main>
-        <h2>Submit Your Review</h2>
-        <form method="post">
+        <form method="post" id="review-form">
+            <h2>Submit Your Review</h2>
             {% csrf_token %}
             <input type="hidden" name="phone_number" value="{{ phone_number }}">
             {{ form.as_p }}
-            <button type="submit">Submit Review</button>
+            <button type="submit">Submit</button>
         </form>
     </main>
+   
 </body>
 </html>

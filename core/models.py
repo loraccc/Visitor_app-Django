@@ -8,7 +8,6 @@ from PIL import Image
 class Role(models.Model):
     name = models.CharField(max_length=100)
     permissions = models.ManyToManyField(Permission, blank=True)
-
     def __str__(self):
         return self.name
 
@@ -37,7 +36,6 @@ class CustomUser(AbstractUser):
             ('change_menu', 'Can change menu'),
         ]
 
-
 class Review(models.Model):
     DEPARTMENT_CHOICES = [
         ('BOD', 'Board of Directors'),
@@ -53,9 +51,16 @@ class Review(models.Model):
         ('Other', 'Other'),
     ]
 
+    CUSTOM_FIELD = [
+        ('Business', 'Business Meeting'),
+        ('Support', 'Customer Support'),
+        ('Consultation', 'Consultation'),
+        ('Other', 'Other'),
+    ]
+
     name = models.CharField(max_length=100)  # Required
     email = models.EmailField(blank=True, null=True)  # Optional
-    phone_number = models.IntegerField(max_length=10, unique=True)  # Required and unique
+    phone_number = models.IntegerField()  # Required and unique
     department = models.CharField(max_length=20, choices=DEPARTMENT_CHOICES, default='Help Desk')  # Department field
     purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES, default='Other')  # Purpose field
     other_purpose = models.CharField(max_length=255, blank=True, null=True)  # Optional additional detail

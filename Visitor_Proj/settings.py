@@ -84,11 +84,11 @@ WSGI_APPLICATION = 'Visitor_Proj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'visitor_db',      # Name of your database
-        'USER': 'visitor',      # Your database username
-        'PASSWORD': '1234', # Your database password
+        'NAME': 'visitors_db',      # Name of your database
+        'USER': 'postgres',      # Your database username
+        'PASSWORD': 'postgres', # Your database password
         'HOST': 'localhost',         # Host (use 'localhost' for local development)
-        'PORT': '5432',              # Default PostgreSQL port
+        'PORT': 5432,              # Default PostgreSQL port
     }
 }
 
