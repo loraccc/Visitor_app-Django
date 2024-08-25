@@ -1,4 +1,4 @@
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -14,12 +14,16 @@ SECRET_KEY = 'django-insecure-r$2!oqfvboiom^8(zhl_sbvnqq+u3yrx!vh5zr2wisss-fz8s*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+USE_I18N = True
+
 ALLOWED_HOSTS = []
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    # 'admin_soft',
+    # 'admin_soft.apps.AdminSoftDashboardConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,7 +52,8 @@ AUTHENTICATION_BACKENDS = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'home/templates')],
+
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -60,6 +65,8 @@ TEMPLATES = [
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = 'Visitor_Proj.wsgi.application'
 

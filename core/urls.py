@@ -4,7 +4,7 @@ from django.contrib.auth.views import LogoutView
 
 from .views import (register, custom_login,home,
                     submit_review,review_qr,simple_review,
-                    see_qr,
+                    see_qr,dashboard_view,
                     visitor_statistics,export_visitor_statistics_csv)
 
 urlpatterns = [
@@ -25,4 +25,7 @@ urlpatterns = [
     path('visitor_statistics/csv/', export_visitor_statistics_csv, name='export_visitor_statistics_csv'),
 
     path('qr', see_qr, name='see_qr'),
+
+    path('dashboard/', dashboard_view, name='dashboard'),
+
 ]

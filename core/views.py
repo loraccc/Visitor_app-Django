@@ -193,3 +193,6 @@ def export_visitor_statistics_csv(request):
         ])
 
     return response
+
+def dashboard_view(request):
+    return render(request, 'includes/base.html')
