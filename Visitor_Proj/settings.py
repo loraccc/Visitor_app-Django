@@ -52,7 +52,7 @@ AUTHENTICATION_BACKENDS = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'core/templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
 
         'APP_DIRS': True,
         'OPTIONS': {
@@ -84,9 +84,9 @@ WSGI_APPLICATION = 'Visitor_Proj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'visitor_db',      # Name of your database
-        'USER': 'visitor',      # Your database username
-        'PASSWORD': '1234', # Your database password
+        'NAME': 'visitors_db',      # Name of your database
+        'USER': 'postgres',      # Your database username
+        'PASSWORD': 'postgres', # Your database password
         'HOST': 'localhost',         # Host (use 'localhost' for local development)
         'PORT': '5432',              # Default PostgreSQL port
     }
@@ -98,7 +98,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'core/static'),
 ]
-
 
 # For media files (if storing files uploaded by users)
 MEDIA_URL = '/media/'

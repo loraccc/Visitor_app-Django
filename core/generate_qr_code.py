@@ -4,7 +4,7 @@ import qrcode
 
 def generate_qr_code():
     # Construct the URL for the review form
-    review_url = "http://127.0.0.1:8000/submit-review/"  # Local development URL
+    review_url = "http://127.0.0.1:8000/number/"  # Local development URL
 
     # Generate the QR code
     qr = qrcode.QRCode(
